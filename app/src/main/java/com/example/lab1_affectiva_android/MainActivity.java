@@ -86,12 +86,14 @@ public class MainActivity extends AppCompatActivity implements CameraDetector.Ca
 
 
         Face currentFace = faces.get(0);
-        EmojiTextView.setText( "Your current face: " + currentFace.emojis.getDominantEmoji().getUnicode());
+
+        EmojiTextView.setText( "Your current face: " + getEmotionEmoji(currentFace.emotions.getJoy(), currentFace.emotions.getAnger(), currentFace.emotions.getFear(), currentFace.emotions.getSurprise()));
         addNewEmotionJoy(currentFace.emotions.getJoy());
         float lastRemovedStampValue = addNewEmotionJoy(timeStamp, currentFace.emotions.getJoy());
-        System.out.println("-------" + timeStamp);
-//        System.out.println("------" + emotionJoyList.size());
 
+        System.out.println("------" + emotionJoyList.size());
+
+        //When joy exceed the requirement, the music will play
        if (emotionJoyList.size() >= sampleNumber) {
             float meanValue = caculateMean();
             if (isJoy(meanValue)) {
@@ -108,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements CameraDetector.Ca
            } else {
                WMALabel.setText("You did not have reached the threshold using WMA");
            }
-//           System.out.println("1: " + meanValue);
-//           System.out.println("2: " + weightMeanVlaue);
+           System.out.println("1: " + meanValue);
+           System.out.println("2: " + weightMeanVlaue);
 
 
        }
@@ -125,12 +127,22 @@ public class MainActivity extends AppCompatActivity implements CameraDetector.Ca
         }
 
 
-
-
-
-
-
     }
+
+    public String getEmotionEmoji(float joy, float anger, float fear, float surprise) {
+        System.out.println("j " + joy + "a " + anger + " " + fear + " " + surprise);
+        if (surprise > 1.9) {
+            return "😍";
+        } else if (anger > 1.1) {
+            return "😈";
+        } else if (fear > 1) {
+            return "😱";
+        } else if (joy > 30) {
+            return "😀";
+        }
+        return "😌";
+    }
+
 
 
 
@@ -153,9 +165,6 @@ public class MainActivity extends AppCompatActivity implements CameraDetector.Ca
         for (int index = 0; index < emotionJoyList.size(); index++) {
             total += emotionJoyList.get(index);
         }
-//        System.out.println("start: " + emotionJoyList.get(0));
-//        System.out.println("end: " + emotionJoyList.get(emotionJoyList.size() - 1));
-//        System.out.println("------------");
         return total / sampleNumber;
 
     }
